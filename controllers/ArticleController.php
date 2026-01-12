@@ -70,8 +70,12 @@ class ArticleController extends Controller
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
 
-                $file = UploadedFile::getInstance($model, 'image');
+                $model->date = date('Y-m-d'); // Current date
+                $model->viewed = 0;           // Start with 0 views
+                $model->user_id = 1;          // Temporary: assign Admin (ID 1) automatically
 
+                // Image Upload Logic
+                $file = UploadedFile::getInstance($model, 'image');
                 if ($file) {
                     $model->image = $file;
                     $model->upload();

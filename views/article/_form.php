@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use app\models\Topic; // Import Topic model
+use yii\helpers\ArrayHelper; // Import ArrayHelper
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Article */
@@ -16,17 +18,15 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'date')->textInput() ?>
+    <?php
+    // Get all topics from DB and map them to [id => name] array
+    $topics = ArrayHelper::map(Topic::find()->all(), 'id', 'name');
+    ?>
+    <?= $form->field($model, 'topic_id')->dropDownList($topics, ['prompt' => 'Select Category...']) ?>
 
     <?= $form->field($model, 'image')->fileInput() ?>
 
     <?= $form->field($model, 'tag')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'viewed')->textInput() ?>
-
-    <?= $form->field($model, 'topic_id')->textInput() ?>
-
-    <?= $form->field($model, 'user_id')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
