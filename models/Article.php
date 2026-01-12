@@ -83,16 +83,21 @@ class Article extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
+    /**
+     * Format the date for display.
+     * @return string
+     */
+    public function getDate()
+    {
+        return Yii::$app->formatter->asDate($this->date);
+    }
+
+    // Check if Gii generated these relations. If not, add them too:
     public function getTopic()
     {
         return $this->hasOne(Topic::class, ['id' => 'topic_id']);
     }
 
-    /**
-     * Gets query for [[User]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
     public function getUser()
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);

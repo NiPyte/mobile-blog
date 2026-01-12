@@ -1,51 +1,59 @@
 <?php
 
 /** @var yii\web\View $this */
+/** @var app\models\Article[] $articles */
+/** @var app\models\Topic[] $topics */
+/** @var yii\data\Pagination $pages */
 
-$this->title = 'My Yii Application';
+use yii\widgets\LinkPager;
+use yii\helpers\Url;
+
+$this->title = 'Mobile Blog';
 ?>
+
 <div class="site-index">
+    <div class="row">
 
-    <div class="jumbotron text-center bg-transparent mt-5 mb-5">
-        <h1 class="display-4">Congratulations!</h1>
+        <div class="col-md-8">
+            <h2 class="mb-4 border-bottom pb-2">Latest Posts</h2>
 
-        <p class="lead">You have successfully created your Yii-powered application.</p>
+            <?php foreach ($articles as $article): ?>
+                <?= $this->render('_article', ['model' => $article]) ?>
+            <?php endforeach; ?>
 
-        <p><a class="btn btn-lg btn-success" href="https://www.yiiframework.com">Get started with Yii</a></p>
-    </div>
-
-    <div class="body-content">
-
-        <div class="row">
-            <div class="col-lg-4 mb-3">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-outline-secondary" href="https://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
+            <div class="d-flex justify-content-center mt-4">
+                <?= LinkPager::widget([
+                        'pagination' => $pages,
+                        'options' => ['class' => 'pagination'],
+                        'linkOptions' => ['class' => 'page-link'],
+                        'pageCssClass' => 'page-item',
+                        'disabledPageCssClass' => 'page-item disabled',
+                        'prevPageCssClass' => 'page-item',
+                        'nextPageCssClass' => 'page-item',
+                ]) ?>
             </div>
-            <div class="col-lg-4 mb-3">
-                <h2>Heading</h2>
+        </div>
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-outline-secondary" href="https://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
+        <div class="col-md-4">
+            <div class="p-4 mb-3 bg-light rounded">
+                <h4 class="fst-italic">Categories</h4>
+                <ul class="list-group list-group-flush bg-transparent">
+                    <?php foreach ($topics as $topic): ?>
+                        <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                            <a href="<?= Url::to(['site/topic', 'id' => $topic->id]) ?>" class="text-decoration-none">
+                                <?= $topic->name ?>
+                            </a>
+                            <span class="badge bg-primary rounded-pill">
+                                <?= $topic->getArticles()->count() ?>
+                            </span>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
             </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-outline-secondary" href="https://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
+            <div class="p-4 mb-3 bg-light rounded">
+                <h4 class="fst-italic">About</h4>
+                <p class="mb-0">Welcome to the best blog about mobile technology. Read reviews of iPhone, Samsung, and more.</p>
             </div>
         </div>
 

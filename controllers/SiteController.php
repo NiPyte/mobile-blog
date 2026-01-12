@@ -9,6 +9,9 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\Article;
+use app\models\Topic;
+use yii\data\Pagination;
 
 class SiteController extends Controller
 {
@@ -61,7 +64,27 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        // 1. Build query for articles (newest first)
+        $query = Article::find()->orderBy(['date' => SORT_DESC]);
+
+        // 2. Setup Pagination (e.g., 3 articles per page)
+        $countQuery = clone $query;
+        $pages = new Pagination(['totalCount' => $countQuery->count(), 'pageSize' => 3]);
+
+        // 3. Get articles for current page
+        $articles = $query->offset($pages->offset)
+            ->limit($pages->limit)
+            ->all();
+
+        // 4. Get all topics for Sidebar
+        $topics = Topic::find()->all();
+
+        // 5. Render view
+        return $this->render('index', [
+            'articles' => $articles,
+            'pages' => $pages,
+            'topics' => $topics,
+        ]);
     }
 
     /**
