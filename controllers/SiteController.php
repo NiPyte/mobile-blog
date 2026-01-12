@@ -109,6 +109,29 @@ class SiteController extends Controller
         ]);
     }
 
+    public function actionView($id)
+    {
+        // 1. Find article by ID
+        $article = Article::findOne($id);
+
+        // 2. Check if exists
+        if (!$article) {
+            throw new \yii\web\NotFoundHttpException("Article not found");
+        }
+
+        // 3. Increment 'viewed' counter
+        $article->updateCounters(['viewed' => 1]);
+
+        // 4. Get topics for Sidebar
+        $topics = Topic::find()->all();
+
+        // 5. Render the view
+        return $this->render('view', [
+            'article' => $article,
+            'topics' => $topics,
+        ]);
+    }
+
     /**
      * Logout action.
      *
