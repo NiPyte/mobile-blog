@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "article".
@@ -39,15 +40,13 @@ class Article extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['description', 'date', 'image', 'tag', 'topic_id', 'user_id'], 'default', 'value' => null],
-            [['viewed'], 'default', 'value' => 0],
-            [['title'], 'required'],
+            [['title', 'description'], 'required'],
             [['description'], 'string'],
             [['date'], 'safe'],
             [['viewed', 'topic_id', 'user_id'], 'integer'],
-            [['title', 'image', 'tag'], 'string', 'max' => 255],
-            [['topic_id'], 'exist', 'skipOnError' => true, 'targetClass' => Topic::class, 'targetAttribute' => ['topic_id' => 'id']],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
+            [['title', 'tag'], 'string', 'max' => 255],
+
+            [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
         ];
     }
 
@@ -99,4 +98,37 @@ class Article extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
+    public function upload()
+    {
+        if ($this->validate()) {
+            if($this->image instanceof UploadedFile) {
+                $path = 'uploads/';
+                if (!is_dir($path)) {
+                    mkdir($path, 0777, true);
+                }
+
+                $filename = strtolower(md5(uniqid($this->image->baseName))) . '.' . $this->image->extension;
+
+                $this->image->saveAs($path . $filename);
+
+                $this->image = $filename;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getImage()
+    {
+        return ($this->image) ? '/uploads/' . $this->image : '/no-image.png';
+    }
+
+    public function deleteImage()
+    {
+        // Перевіряємо, чи файл існує, і видаляємо його
+        if ($this->image && file_exists('uploads/' . $this->image)) {
+            unlink('uploads/' . $this->image);
+        }
+    }
 }

@@ -7,6 +7,9 @@ use app\models\ArticleSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\ImageUpload; // Import ImageUpload model
+use yii\web\UploadedFile; // Import UploadedFile class
+use Yii;
 
 /**
  * ArticleController implements the CRUD actions for Article model.
@@ -60,18 +63,23 @@ class ArticleController extends Controller
         ]);
     }
 
-    /**
-     * Creates a new Article model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
     public function actionCreate()
     {
         $model = new Article();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post())) {
+
+                $file = UploadedFile::getInstance($model, 'image');
+
+                if ($file) {
+                    $model->image = $file;
+                    $model->upload();
+                }
+
+                if ($model->save(false)) {
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -82,19 +90,26 @@ class ArticleController extends Controller
         ]);
     }
 
-    /**
-     * Updates an existing Article model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $oldImage = $model->image;
+
+        if ($this->request->isPost && $model->load($this->request->post())) {
+
+            $file = UploadedFile::getInstance($model, 'image');
+
+            if ($file) {
+                $model->image = $file;
+                $model->upload();
+            } else {
+                $model->image = $oldImage;
+            }
+
+            if ($model->save(false)) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
 
         return $this->render('update', [
