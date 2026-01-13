@@ -15,7 +15,9 @@ $this->title = 'Mobile Blog';
     <div class="row">
 
         <div class="col-md-8">
-            <h2 class="mb-4 border-bottom pb-2">Latest Posts</h2>
+            <h2 class="mb-4 border-bottom pb-2">
+                <?= isset($currentTopic) ? 'Category: ' . \yii\helpers\Html::encode($currentTopic->name) : 'Latest Posts' ?>
+            </h2>
 
             <?php foreach ($articles as $article): ?>
                 <?= $this->render('_article', ['model' => $article]) ?>

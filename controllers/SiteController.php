@@ -191,4 +191,31 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+
+    /**
+     * Displays articles from a specific category (Topic).
+     */
+    public function actionTopic($id)
+    {
+        $topic = Topic::findOne($id);
+
+        if (!$topic) {
+            throw new \yii\web\NotFoundHttpException("Category not found");
+        }
+
+        $query = Article::find()->where(['topic_id' => $id])->orderBy(['date' => SORT_DESC]);
+
+        $countQuery = clone $query;
+        $pages = new Pagination(['totalCount' => $countQuery->count(), 'pageSize' => 3]);
+        $articles = $query->offset($pages->offset)->limit($pages->limit)->all();
+
+        $topics = Topic::find()->all();
+
+        return $this->render('index', [
+            'articles' => $articles,
+            'pages' => $pages,
+            'topics' => $topics,
+            'currentTopic' => $topic,
+        ]);
+    }
 }
