@@ -218,4 +218,28 @@ class SiteController extends Controller
             'currentTopic' => $topic,
         ]);
     }
+
+    /**
+     * Displays articles by tag.
+     */
+    /**
+     * Displays articles by tag.
+     */
+    public function actionTag($tag)
+    {
+        $query = Article::find()->where(['like', 'tag', $tag])->orderBy(['date' => SORT_DESC]);
+
+        $countQuery = clone $query;
+        $pages = new Pagination(['totalCount' => $countQuery->count(), 'pageSize' => 3]);
+        $articles = $query->offset($pages->offset)->limit($pages->limit)->all();
+
+        $topics = Topic::find()->all();
+
+        return $this->render('index', [
+            'articles' => $articles,
+            'pages' => $pages,
+            'topics' => $topics,
+            'currentTopic' => (object)['name' => 'Tag: ' . $tag], // Fake object for title
+        ]);
+    }
 }
