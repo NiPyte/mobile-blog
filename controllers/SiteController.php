@@ -12,6 +12,7 @@ use app\models\ContactForm;
 use app\models\Article;
 use app\models\Topic;
 use yii\data\Pagination;
+use app\models\Comment;
 
 class SiteController extends Controller
 {
@@ -111,24 +112,43 @@ class SiteController extends Controller
 
     public function actionView($id)
     {
-        // 1. Find article by ID
         $article = Article::findOne($id);
 
-        // 2. Check if exists
         if (!$article) {
             throw new \yii\web\NotFoundHttpException("Article not found");
         }
 
-        // 3. Increment 'viewed' counter
+        // 1. Prepare Comment Model
+        $comment = new Comment();
+
+        // 2. Handle Comment Submission
+        if ($comment->load(Yii::$app->request->post())) {
+            if (!Yii::$app->user->isGuest) {
+                $comment->user_id = Yii::$app->user->id; // Current User
+                $comment->article_id = $article->id;     // Current Article
+                $comment->date = date('Y-m-d');          // Current Date
+                $comment->delete_status = 0;             // Default status
+
+                if ($comment->save()) {
+                    Yii::$app->session->setFlash('success', "Comment added!");
+                    // Refresh page to prevent duplicate submission on F5
+                    return $this->refresh();
+                }
+            }
+        }
+
+        // 3. Increment views
         $article->updateCounters(['viewed' => 1]);
 
-        // 4. Get topics for Sidebar
+        // 4. Get data for view
         $topics = Topic::find()->all();
+        $comments = $article->comments; // Get existing comments
 
-        // 5. Render the view
         return $this->render('view', [
             'article' => $article,
             'topics' => $topics,
+            'comment' => $comment, // Pass the form model
+            'comments' => $comments, // Pass existing comments
         ]);
     }
 

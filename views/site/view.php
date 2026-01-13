@@ -45,10 +45,58 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
 
             <div class="mt-5">
-                <h3>Comments</h3>
-                <div class="alert alert-light border">
-                    Comments functionality coming soon...
-                </div>
+                <h3 class="mb-4">Comments (<?= count($comments) ?>)</h3>
+
+                <?php if (!empty($comments)): ?>
+                    <?php foreach ($comments as $comment): ?>
+                        <div class="card mb-3 border-0 bg-light">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <h6 class="card-subtitle mb-2 text-primary">
+                                        <?= Html::encode($comment->user ? $comment->user->name : 'Unknown User') ?>
+                                    </h6>
+                                    <span class="text-muted small"><?= $comment->date ?></span>
+                                </div>
+                                <p class="card-text">
+                                    <?= Html::encode($comment->text) ?>
+                                </p>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p class="text-muted">No comments yet. Be the first!</p>
+                <?php endif; ?>
+
+                <hr>
+
+                <?php if (!Yii::$app->user->isGuest): ?>
+                    <div class="comment-form mt-4">
+                        <h4>Leave a Comment</h4>
+                        <?php $form = \yii\widgets\ActiveForm::begin([
+                                'action' => ['site/view', 'id' => $article->id],
+                                'options' => ['class' => 'form-horizontal'],
+                                'fieldConfig' => [
+                                        'template' => "{input}\n{error}", // Clean layout without labels
+                                ],
+                        ]); ?>
+
+                        <?= $form->field($comment, 'text')->textarea([
+                                'class' => 'form-control',
+                                'rows' => 3,
+                                'placeholder' => 'Write your opinion here...'
+                        ])->label(false) ?>
+
+                        <div class="form-group mt-2">
+                            <?= Html::submitButton('Post Comment', ['class' => 'btn btn-primary']) ?>
+                        </div>
+
+                        <?php \yii\widgets\ActiveForm::end(); ?>
+                    </div>
+                <?php else: ?>
+                    <div class="alert alert-warning">
+                        Please <a href="<?= Url::to(['site/login']) ?>">Login</a> to leave a comment.
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
 

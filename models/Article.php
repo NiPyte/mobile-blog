@@ -69,9 +69,7 @@ class Article extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Comments]].
-     *
-     * @return \yii\db\ActiveQuery
+     * Get all comments for this article.
      */
     public function getComments()
     {
