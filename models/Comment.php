@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\models\User;
 
 /**
  * This is the model class for table "comment".
@@ -13,7 +14,6 @@ use Yii;
  * @property int|null $article_id
  * @property string|null $date
  * @property int|null $delete_status
- *
  * @property Article $article
  * @property User $user
  */
@@ -39,6 +39,7 @@ class Comment extends \yii\db\ActiveRecord
             [['delete_status'], 'default', 'value' => 0],
             [['text'], 'required'],
             [['user_id', 'article_id', 'delete_status'], 'integer'],
+            [['user_id', 'article_id', 'parent_id'], 'integer'],
             [['date'], 'safe'],
             [['text'], 'string', 'max' => 255],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
@@ -76,9 +77,15 @@ class Comment extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
+
     public function getUser()
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
+    }
+
+    public function getChildren()
+    {
+        return $this->hasMany(Comment::class, ['parent_id' => 'id']);
     }
 
 }

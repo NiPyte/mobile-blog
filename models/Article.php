@@ -73,7 +73,7 @@ class Article extends \yii\db\ActiveRecord
      */
     public function getComments()
     {
-        return $this->hasMany(Comment::class, ['article_id' => 'id']);
+        return $this->hasMany(Comment::class, ['article_id' => 'id'])->where(['parent_id' => null]);
     }
 
     /**
