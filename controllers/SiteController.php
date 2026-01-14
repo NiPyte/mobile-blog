@@ -13,6 +13,7 @@ use app\models\Article;
 use app\models\Topic;
 use yii\data\Pagination;
 use app\models\Comment;
+use app\models\SignupForm;
 
 class SiteController extends Controller
 {
@@ -240,6 +241,27 @@ class SiteController extends Controller
             'pages' => $pages,
             'topics' => $topics,
             'currentTopic' => (object)['name' => 'Tag: ' . $tag], // Fake object for title
+        ]);
+    }
+
+    /**
+     * Signs user up.
+     *
+     * @return mixed
+     */
+    public function actionSignup()
+    {
+        $model = new SignupForm();
+        if ($model->load(Yii::$app->request->post())) {
+            if ($user = $model->signup()) {
+                if (Yii::$app->getUser()->login($user)) {
+                    return $this->goHome();
+                }
+            }
+        }
+
+        return $this->render('signup', [
+            'model' => $model,
         ]);
     }
 }

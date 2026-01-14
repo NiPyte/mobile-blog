@@ -55,7 +55,7 @@ class User extends ActiveRecord implements IdentityInterface
 
     public static function findByUsername($username)
     {
-        return static::findOne(['login' => $username]);
+        return static::findOne(['email' => $username]);
     }
 
     public function getId()
