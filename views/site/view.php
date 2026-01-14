@@ -55,18 +55,21 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?= nl2br(Html::encode($article->description)) ?>
                     </div>
 
-                    <div class="social-share mt-4 p-3 bg-light rounded">
+                    <div class="social-share mt-4">
                         <h5>Share this post:</h5>
                         <?php
                         $pageUrl = Url::to(['site/view', 'id' => $article->id], true);
                         $title = $article->title;
                         ?>
+
                         <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($pageUrl) ?>" target="_blank" class="btn btn-primary btn-sm">
                             <i class="bi bi-facebook"></i> Facebook
                         </a>
+
                         <a href="https://twitter.com/intent/tweet?text=<?= urlencode($title) ?>&url=<?= urlencode($pageUrl) ?>" target="_blank" class="btn btn-dark btn-sm">
                             <i class="bi bi-twitter-x"></i> X (Twitter)
                         </a>
+
                         <a href="https://t.me/share/url?url=<?= urlencode($pageUrl) ?>&text=<?= urlencode($title) ?>" target="_blank" class="btn btn-info btn-sm text-white">
                             <i class="bi bi-telegram"></i> Telegram
                         </a>
