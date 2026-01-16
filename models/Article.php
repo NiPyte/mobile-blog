@@ -128,7 +128,6 @@ class Article extends \yii\db\ActiveRecord
 
     public function deleteImage()
     {
-        // Перевіряємо, чи файл існує, і видаляємо його
         if ($this->image && file_exists('uploads/' . $this->image)) {
             unlink('uploads/' . $this->image);
         }
