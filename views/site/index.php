@@ -7,6 +7,7 @@
 
 use yii\widgets\LinkPager;
 use yii\helpers\Url;
+use yii\helpers\Html;
 
 $this->title = 'Mobile Blog';
 ?>
@@ -15,6 +16,18 @@ $this->title = 'Mobile Blog';
     <div class="row">
 
         <div class="col-md-8">
+            <form method="get" action="<?= Url::to(['site/index']) ?>" class="mb-4">
+                <div class="d-flex"> <input type="text" name="search" class="form-control me-2"
+                                            placeholder="Search by title, description or tag..."
+                                            value="<?= Html::encode($search ?? '') ?>">
+
+                    <button class="btn btn-primary" type="submit">Search</button>
+
+                    <?php if (!empty($search)): ?>
+                        <a href="<?= Url::to(['site/index']) ?>" class="btn btn-outline-secondary ms-2">Reset</a>
+                    <?php endif; ?>
+                </div>
+            </form>
             <h2 class="mb-4 border-bottom pb-2">
                 <?= isset($currentTopic) ? 'Category: ' . \yii\helpers\Html::encode($currentTopic->name) : 'Latest Posts' ?>
             </h2>
@@ -28,10 +41,12 @@ $this->title = 'Mobile Blog';
                         'pagination' => $pages,
                         'options' => ['class' => 'pagination'],
                         'linkOptions' => ['class' => 'page-link'],
+                        'disabledListItemSubTagOptions' => ['class' => 'page-link'],
                         'pageCssClass' => 'page-item',
                         'disabledPageCssClass' => 'page-item disabled',
                         'prevPageCssClass' => 'page-item',
                         'nextPageCssClass' => 'page-item',
+                        'activePageCssClass' => 'active',
                 ]) ?>
             </div>
         </div>

@@ -60,32 +60,48 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays homepage.
+     * Displays homepage with article list and search functionality.
      *
      * @return string
      */
     public function actionIndex()
     {
-        // 1. Build query for articles (newest first)
-        $query = Article::find()->orderBy(['date' => SORT_DESC]);
+        // 1. Create a basic query to select all articles
+        $query = Article::find();
 
-        // 2. Setup Pagination (e.g., 3 articles per page)
+        // 2. Get the search parameter from the URL
+        $search = Yii::$app->request->get('search');
+
+        if ($search) {
+            // Filter: Title OR Description OR Tag matches the search term
+            $query->andWhere(['or',
+                ['like', 'title', $search],
+                ['like', 'description', $search],
+                ['like', 'tag', $search] // Fulfills "Search by tags" requirement
+            ]);
+        }
+
+        // 3. Order by date (newest first)
+        $query->orderBy(['date' => SORT_DESC]);
+
+        // 4. Setup Pagination (e.g., 3 articles per page)
         $countQuery = clone $query;
         $pages = new Pagination(['totalCount' => $countQuery->count(), 'pageSize' => 3]);
 
-        // 3. Get articles for current page
+        // 5. Get articles for the current page
         $articles = $query->offset($pages->offset)
             ->limit($pages->limit)
             ->all();
 
-        // 4. Get all topics for Sidebar
+        // 6. Get topics for Sidebar
         $topics = Topic::find()->all();
 
-        // 5. Render view
+        // 7. Render the view
         return $this->render('index', [
             'articles' => $articles,
             'pages' => $pages,
             'topics' => $topics,
+            'search' => $search, // Pass search term back to view to keep it in input
         ]);
     }
 

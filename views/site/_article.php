@@ -29,6 +29,21 @@ use yii\helpers\Url;
                     <?= \yii\helpers\StringHelper::truncate(Html::encode($model->description), 150) ?>
                 </p>
 
+                <?php if ($model->tag): ?>
+                    <div class="mb-3">
+                        <i class="bi bi-tags"></i>
+                        <?php
+                        $tags = explode(',', $model->tag);
+                        foreach($tags as $tag):
+                            $tag = trim($tag);
+                            if(empty($tag)) continue;
+                            ?>
+                            <a href="<?= Url::to(['site/tag', 'tag' => $tag]) ?>" class="badge bg-secondary text-decoration-none" style="font-size: 0.8rem;">
+                                <?= Html::encode($tag) ?>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
                 <a href="<?= Url::to(['site/view', 'id' => $model->id]) ?>" class="btn btn-outline-primary btn-sm">Read More &rarr;</a>
             </div>
         </div>

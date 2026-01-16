@@ -65,11 +65,30 @@ function renderComment($commentEntity, $level = 0) {
 
                     <p class="blog-post-meta text-muted">
                         <i class="bi bi-calendar"></i> <?= $article->getDate() ?>
+
                         by <a href="#"><?= $article->user ? $article->user->name : 'Unknown' ?></a>
                         &nbsp;|&nbsp;
+
                         <i class="bi bi-folder"></i> <?= $article->topic ? $article->topic->name : 'No Category' ?>
                         &nbsp;|&nbsp;
+
                         <i class="bi bi-eye"></i> <?= $article->viewed ?> views
+
+                        &nbsp;|&nbsp;
+                        <i class="bi bi-tags"></i>
+                        <?php
+                        if ($article->tag) {
+                            $tags = explode(',', $article->tag);
+                            foreach($tags as $tag):
+                                $tag = trim($tag);
+                                if(empty($tag)) continue;
+                                ?>
+                                <a href="<?= Url::to(['site/tag', 'tag' => $tag]) ?>" class="badge bg-secondary text-decoration-none">
+                                    <?= Html::encode($tag) ?>
+                                </a>
+                            <?php endforeach;
+                        }
+                        ?>
                     </p>
 
                     <hr>

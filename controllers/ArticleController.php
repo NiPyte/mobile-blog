@@ -86,7 +86,7 @@ class ArticleController extends Controller
 
                 $model->date = date('Y-m-d'); // Current date
                 $model->viewed = 0;           // Start with 0 views
-                $model->user_id = 1;          // Temporary: assign Admin (ID 1) automatically
+                $model->user_id = Yii::$app->user->id;
 
                 // Image Upload Logic
                 $file = UploadedFile::getInstance($model, 'image');

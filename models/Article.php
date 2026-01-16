@@ -44,8 +44,7 @@ class Article extends \yii\db\ActiveRecord
             [['description'], 'string'],
             [['date'], 'safe'],
             [['viewed', 'topic_id', 'user_id'], 'integer'],
-            [['title', 'tag'], 'string', 'max' => 255],
-
+            [['title', 'image', 'tag'], 'string', 'max' => 255],
             [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
         ];
     }
